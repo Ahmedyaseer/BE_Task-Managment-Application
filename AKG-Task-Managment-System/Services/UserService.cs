@@ -30,15 +30,8 @@ namespace AKG_Task_Managment_System.Services
                 CreatedBy = userName
             };
 
+            user.UserRoles.Add(new UserRole { RoleId = dto.RoleId });
             await unitOfWork.Repository<User>().AddAsync(user);
-
-            var userRole = new UserRole
-            {
-                UserId = user.Id,
-                RoleId = dto.RoleId
-            };
-
-            await unitOfWork.Repository<UserRole>().AddAsync(userRole);
             await unitOfWork.SaveChangesAsync();
 
             var created = await unitOfWork.Repository<User>().GetQueryable()
