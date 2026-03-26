@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="AKG-Task-Managment-System/AKG-Task-Managment-System.csproj" />
+  <Project Path="Task-Managment-Data/TMA-Data.csproj" Id="ad3a27ad-c63d-45d9-bedb-236d4c31ef73" />
+  <Project Path="TMA-Core/TMA-Core.csproj" Id="8060d194-7cdb-4056-b952-1e65c3a36f80" />
+</Solution>
