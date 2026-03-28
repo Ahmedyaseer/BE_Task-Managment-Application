@@ -20,12 +20,16 @@ namespace Task_Managment_Data.Features
 
         public int AssignedToId { get; set; }
         public int TaskStatusId { get; set; } = (int)TaskStatusEnum.Pending;
+        public int DepartmentId { get; set; }
 
         [ForeignKey("AssignedToId")]
         public virtual Employee AssignedTo { get; set; } = null!;
 
         [ForeignKey("TaskStatusId")]
         public virtual TaskStatus Status { get; set; } = null!;
+
+        [ForeignKey("DepartmentId")]
+        public virtual Department Department { get; set; } = null!;
         [NotMapped]
         public TaskStatusEnum StatusEnum
         {

@@ -224,12 +224,18 @@ namespace Task_Managment_Data.Core
             var carol = context.Employees.First(e => e.FirstName == "Carol" && e.LastName == "Williams");
             var david = context.Employees.First(e => e.FirstName == "David" && e.LastName == "Brown"); // FIX: was ambiguous
 
+            var it = context.Departments.First(d => d.Name == "IT");
+            var logistics = context.Departments.First(d => d.Name == "Logistics");
+            var hr = context.Departments.First(d => d.Name == "Human Resources");
+            var procurement = context.Departments.First(d => d.Name == "Procurement");
+
             context.Tasks.AddRange(
                 new WorkTask
                 {
                     Title = "Set up CI/CD pipeline",
                     Description = "Configure GitHub Actions for build and deployment",
                     AssignedToId = bob.Id,
+                    DepartmentId = it.Id,
                     TaskStatusId = (int)TaskStatusEnum.InProgress,
                     CreatedBy = "alice.johnson"
                 },
@@ -238,6 +244,7 @@ namespace Task_Managment_Data.Core
                     Title = "Implement authentication module",
                     Description = "JWT-based login and role validation",
                     AssignedToId = carol.Id,
+                    DepartmentId = it.Id,
                     TaskStatusId = (int)TaskStatusEnum.Pending,
                     CreatedBy = "alice.johnson"
                 },
@@ -246,6 +253,7 @@ namespace Task_Managment_Data.Core
                     Title = "Prepare Q3 procurement report",
                     Description = "Compile regional procurement figures for Q3",
                     AssignedToId = david.Id,
+                    DepartmentId = procurement.Id,
                     TaskStatusId = (int)TaskStatusEnum.Pending,
                     CreatedBy = "bob.smith"
                 },
@@ -254,6 +262,7 @@ namespace Task_Managment_Data.Core
                     Title = "Code review — payment service",
                     Description = "Review and approve payment service PR",
                     AssignedToId = bob.Id,
+                    DepartmentId = it.Id,
                     TaskStatusId = (int)TaskStatusEnum.Completed,
                     CreatedBy = "alice.johnson"
                 },
@@ -262,6 +271,7 @@ namespace Task_Managment_Data.Core
                     Title = "Migrate legacy database to SQL Server",
                     Description = "Export data from the old MySQL database, transform schemas, and import into the new SQL Server instance with full data validation",
                     AssignedToId = bob.Id,
+                    DepartmentId = it.Id,
                     TaskStatusId = (int)TaskStatusEnum.Pending,
                     CreatedAt = new DateTime(2026, 3, 20, 9, 0, 0, DateTimeKind.Utc),
                     CreatedBy = "alice.johnson",
@@ -273,6 +283,7 @@ namespace Task_Managment_Data.Core
                     Title = "Conduct annual employee satisfaction survey",
                     Description = "Design the survey questionnaire, distribute to all departments, collect responses, and compile a summary report for management review",
                     AssignedToId = carol.Id,
+                    DepartmentId = hr.Id,
                     TaskStatusId = (int)TaskStatusEnum.Completed,
                     CreatedAt = new DateTime(2026, 2, 10, 8, 0, 0, DateTimeKind.Utc),
                     CreatedBy = "bob.smith",
@@ -284,6 +295,7 @@ namespace Task_Managment_Data.Core
                     Title = "Evaluate new office supply vendors",
                     Description = "Research and compare at least five vendors for office supplies, negotiate pricing, and present a recommendation to the procurement lead",
                     AssignedToId = david.Id,
+                    DepartmentId = procurement.Id,
                     TaskStatusId = (int)TaskStatusEnum.Cancelled,
                     CreatedAt = new DateTime(2026, 1, 15, 10, 0, 0, DateTimeKind.Utc),
                     CreatedBy = "alice.johnson",

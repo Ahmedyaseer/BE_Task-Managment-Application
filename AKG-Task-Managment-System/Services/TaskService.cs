@@ -16,11 +16,18 @@ namespace AKG_Task_Managment_System.Services
             if (!employeeExists)
                 throw new Exception("Employee not found");
 
+            var departmentExists = await unitOfWork.Repository<Department>()
+                .ExistsAsync(d => d.Id == dto.DepartmentId);
+
+            if (!departmentExists)
+                throw new Exception("Department not found");
+
             var task = new WorkTask
             {
                 Title = dto.Title,
                 Description = dto.Description,
                 AssignedToId = dto.AssignedToId,
+                DepartmentId = dto.DepartmentId,
                 TaskStatusId = (int)TaskStatusEnum.Pending,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = userName
@@ -41,6 +48,7 @@ namespace AKG_Task_Managment_System.Services
             if (dto.Description is not null) task.Description = dto.Description;
             if (dto.AssignedToId.HasValue) task.AssignedToId = dto.AssignedToId.Value;
             if (dto.TaskStatusId.HasValue) task.TaskStatusId = dto.TaskStatusId.Value;
+            if (dto.DepartmentId.HasValue) task.DepartmentId = dto.DepartmentId.Value;
             task.UpdatedAt = DateTime.UtcNow;
             task.UpdatedBy = userName;
 
@@ -75,6 +83,7 @@ namespace AKG_Task_Managment_System.Services
             var task = await unitOfWork.Repository<WorkTask>().GetQueryable()
                 .Include(t => t.AssignedTo)
                 .Include(t => t.Status)
+                .Include(t => t.Department)
                 .FirstOrDefaultAsync(t => t.Id == id)
                 ?? throw new Exception("Task not found");
 
@@ -85,7 +94,8 @@ namespace AKG_Task_Managment_System.Services
         {
             IQueryable<WorkTask> query = unitOfWork.Repository<WorkTask>().GetQueryable()
                 .Include(t => t.AssignedTo)
-                .Include(t => t.Status);
+                .Include(t => t.Status)
+                .Include(t => t.Department);
 
             if (!string.IsNullOrWhiteSpace(filter.GlobalSearch))
             {
@@ -103,6 +113,8 @@ namespace AKG_Task_Managment_System.Services
                         => query.Where(t => t.TaskStatusId == statusId),
                     ("assignedtoid", "EQUALS") when int.TryParse(f.Value, out var empId)
                         => query.Where(t => t.AssignedToId == empId),
+                    ("departmentid", "EQUALS") when int.TryParse(f.Value, out var deptId)
+                        => query.Where(t => t.DepartmentId == deptId),
                     ("title", "CONTAINS")
                         => query.Where(t => t.Title.ToLower().Contains(f.Value.ToLower())),
                     _ => query
@@ -122,6 +134,9 @@ namespace AKG_Task_Managment_System.Services
                 "status" or "taskstatusid" => filter.SortDirection.ToLower() == "asc"
                     ? query.OrderBy(t => t.TaskStatusId)
                     : query.OrderByDescending(t => t.TaskStatusId),
+                "department" or "departmentid" => filter.SortDirection.ToLower() == "asc"
+                    ? query.OrderBy(t => t.Department.Name)
+                    : query.OrderByDescending(t => t.Department.Name),
                 _ => filter.SortDirection.ToLower() == "asc"
                     ? query.OrderBy(t => t.Id)
                     : query.OrderByDescending(t => t.Id)
@@ -161,6 +176,8 @@ namespace AKG_Task_Managment_System.Services
                 ? $"{t.AssignedTo.FirstName} {t.AssignedTo.LastName}" : "",
             TaskStatusId = t.TaskStatusId,
             StatusName = t.Status?.Name ?? "",
+            DepartmentId = t.DepartmentId,
+            DepartmentName = t.Department?.Name ?? "",
             CreatedAt = t.CreatedAt,
             UpdatedAt = t.UpdatedAt,
             CreatedBy = t.CreatedBy,

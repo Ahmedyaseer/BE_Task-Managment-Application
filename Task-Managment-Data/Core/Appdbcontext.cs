@@ -46,6 +46,13 @@ namespace Task_Managment_Data.Core
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId);
 
+            // WorkTask → Department: restrict delete to avoid multiple cascade paths
+            modelBuilder.Entity<WorkTask>()
+                .HasOne(t => t.Department)
+                .WithMany()
+                .HasForeignKey(t => t.DepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // RolePermission relationships
             modelBuilder.Entity<RolePermission>()
                 .HasOne(rp => rp.Role)
